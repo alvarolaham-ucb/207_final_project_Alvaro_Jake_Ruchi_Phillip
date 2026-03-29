@@ -12,7 +12,7 @@ import json
 
 # Parameters
 analysis_df_path = '/Users/kleinjr1/Downloads/analysis_df2.csv' # output from eda_and_preprocessing ruchit branch
-output_params_path = '/Users/kleinjr1/Downloads/best_hps2.json'
+output_params_path = '/Users/kleinjr1/Downloads/best_hps3.json'
 
 # Load df
 df = pd.read_csv(analysis_df_path)
@@ -22,8 +22,8 @@ Y = df[['fire_start_day']]
 temp = df.copy()
 temp = temp.drop(columns=['fire_start_day'])
 X = temp
-X_temporary, X_test, Y_temporary, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
-X_train, X_val, Y_train, Y_val = train_test_split(X_temporary, Y_temporary, test_size=0.25, random_state=0)
+X_temporary, X_test, Y_temporary, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0, stratify=Y)
+X_train, X_val, Y_train, Y_val = train_test_split(X_temporary, Y_temporary, test_size=0.25, random_state=0, stratify=Y_temporary)
 
 ###########
 # Data prep

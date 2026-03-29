@@ -17,7 +17,7 @@ from sklearn.metrics import precision_recall_curve, average_precision_score
 
 # Parameters
 analysis_df_path = '/Users/kleinjr1/Downloads/analysis_df2.csv' # output from eda_and_preprocessing ruchit branch
-input_params_path = '/Users/kleinjr1/Downloads/best_hps2.json'
+input_params_path = '/Users/kleinjr1/Downloads/best_hps3.json'
 
 # Load df
 df = pd.read_csv(analysis_df_path)
@@ -35,8 +35,8 @@ Y = df[['fire_start_day']]
 temp = df.copy()
 temp = temp.drop(columns=['fire_start_day'])
 X = temp
-X_temporary, X_test, Y_temporary, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
-X_train, X_val, Y_train, Y_val = train_test_split(X_temporary, Y_temporary, test_size=0.25, random_state=0)
+X_temporary, X_test, Y_temporary, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0, stratify=Y)
+X_train, X_val, Y_train, Y_val = train_test_split(X_temporary, Y_temporary, test_size=0.25, random_state=0, stratify=Y_temporary)
 
 ###########
 # Data prep
@@ -55,28 +55,28 @@ X_train_std[numeric_cols_lower] = scaler.fit_transform(X_train[numeric_cols_lowe
 X_val_std[numeric_cols_lower] = scaler.transform(X_val[numeric_cols_lower])
 X_test_std[numeric_cols_lower] = scaler.transform(X_test[numeric_cols_lower])
 
-# # Recreate model
-# model = model_builder(hp, (X_train.shape[1],))
-#
-#
-# history = model.fit(X_train_std,
-#                     Y_train,
-#                     batch_size=32,
-#                     validation_data=(X_val_std, Y_val),
-#                     class_weight={0: 1, 1: 2}, # Adjusting for the 67/33 split
-#                     epochs=100)
-#
-# model.save("/Users/kleinjr1/Downloads/best_model2.keras", save_format="tf")
-# history = history.history
-# with open("/Users/kleinjr1/Downloads/best_model_history2.json", "w") as f:
-#     json.dump(history, f)
+# Recreate model
+model = model_builder(hp, (X_train.shape[1],))
 
-# # Load saved model
-model = keras.models.load_model("/Users/kleinjr1/Downloads/best_model2.keras")
 
-# Load saved history
-with open("/Users/kleinjr1/Downloads/best_model_history2.json", 'r') as file:
-    history = json.load(file)
+history = model.fit(X_train_std,
+                    Y_train,
+                    batch_size=32,
+                    validation_data=(X_val_std, Y_val),
+                    class_weight={0: 1, 1: 2}, # Adjusting for the 67/33 split
+                    epochs=100)
+
+model.save("/Users/kleinjr1/Downloads/best_model3.keras", save_format="tf")
+history = history.history
+with open("/Users/kleinjr1/Downloads/best_model_history3.json", "w") as f:
+    json.dump(history, f)
+
+# # # Load saved model
+# model = keras.models.load_model("/Users/kleinjr1/Downloads/best_model2.keras")
+#
+# # Load saved history
+# with open("/Users/kleinjr1/Downloads/best_model_history2.json", 'r') as file:
+#     history = json.load(file)
 
 # Show learned model with weights and biases
 W_final_layer, b_final_layer = model.layers[-1].get_weights()
@@ -112,7 +112,6 @@ print(val_accuracy)
 print("Gap between aggregate test and train accuracy", test_accuracy - train_accuracy)
 
 
-
 # Confusion Matrix
 disp = ConfusionMatrixDisplay.from_predictions(Y_test, test_preds, cmap=plt.cm.Blues,
                                               display_labels=["No Fire [0]", "Fire [1]"])
@@ -132,7 +131,7 @@ print(classification_report(
 
 
 # Training Process diagnostics
-output_fig_path = '/Users/kleinjr1/Downloads/results2.png'
+output_fig_path = '/Users/kleinjr1/Downloads/results3.png'
 
 val_acc_per_epoch = history['val_binary_accuracy']
 best_epoch = val_acc_per_epoch.index(max(val_acc_per_epoch)) + 1
