@@ -55,28 +55,28 @@ X_train_std[numeric_cols_lower] = scaler.fit_transform(X_train[numeric_cols_lowe
 X_val_std[numeric_cols_lower] = scaler.transform(X_val[numeric_cols_lower])
 X_test_std[numeric_cols_lower] = scaler.transform(X_test[numeric_cols_lower])
 
-# Recreate model
-model = model_builder(hp, (X_train.shape[1],))
-
-
-history = model.fit(X_train_std,
-                    Y_train,
-                    batch_size=32,
-                    validation_data=(X_val_std, Y_val),
-                    class_weight={0: 1, 1: 2}, # Adjusting for the 67/33 split
-                    epochs=100)
-
-model.save("/Users/kleinjr1/Downloads/best_model3.keras", save_format="tf")
-history = history.history
-with open("/Users/kleinjr1/Downloads/best_model_history3.json", "w") as f:
-    json.dump(history, f)
-
-# # # Load saved model
-# model = keras.models.load_model("/Users/kleinjr1/Downloads/best_model2.keras")
+# # Recreate model
+# model = model_builder(hp, (X_train.shape[1],))
 #
-# # Load saved history
-# with open("/Users/kleinjr1/Downloads/best_model_history2.json", 'r') as file:
-#     history = json.load(file)
+#
+# history = model.fit(X_train_std,
+#                     Y_train,
+#                     batch_size=32,
+#                     validation_data=(X_val_std, Y_val),
+#                     class_weight={0: 1, 1: 2}, # Adjusting for the 67/33 split
+#                     epochs=100)
+#
+# model.save("/Users/kleinjr1/Downloads/best_model3.keras", save_format="tf")
+# history = history.history
+# with open("/Users/kleinjr1/Downloads/best_model_history3.json", "w") as f:
+#     json.dump(history, f)
+
+# # Load saved model
+model = keras.models.load_model("/Users/kleinjr1/Downloads/best_model3.keras")
+
+# Load saved history
+with open("/Users/kleinjr1/Downloads/best_model_history3.json", 'r') as file:
+    history = json.load(file)
 
 # Show learned model with weights and biases
 W_final_layer, b_final_layer = model.layers[-1].get_weights()
@@ -102,7 +102,7 @@ val_accuracy = np.sum(final_model_val_accuracy_df['predictions'] == final_model_
 test_accuracy = np.sum(final_model_test_accuracy_df['predictions'] == final_model_test_accuracy_df['actuals']) / len(final_model_test_accuracy_df)
 
 agg_accuracy = np.sum(agg_accuracy_df['predictions'] == agg_accuracy_df['actuals']) / len(agg_accuracy_df)
-print('train accurayc')
+print('train accuracy')
 print(train_accuracy)
 print('test accuracy')
 print(test_accuracy)
@@ -193,6 +193,8 @@ plt.legend()
 plt.show()
 
 # AUPR
+# model_results_on_test_data = pd.DataFrame({"probabilities": test_preds_probs, "true_labels": Y_test['fire_start_day']})
+# model_results_on_test_data.to_csv('/Users/kleinjr1/Downloads/model3_preds_and_labels.csv', index=False)
 precision, recall, thresholds = precision_recall_curve(Y_test, test_preds_probs)
 pr_auc = average_precision_score(Y_test, test_preds_probs)
 
