@@ -5,11 +5,12 @@ from sklearn import metrics
 ffnn_results = pd.read_csv('/Users/kleinjr1/Downloads/model3_preds_and_labels.csv')
 xgboost_results = pd.read_csv('/Users/kleinjr1/Downloads/model_xgb_results.csv')
 log_reg_results = pd.read_csv('/Users/kleinjr1/Downloads/model_results_logreg.csv')
-# rf_results = pd.read_csv('/Users/kleinjr1/Downloads/model_rf_results.csv')
+rf_results = pd.read_csv('/Users/kleinjr1/Downloads/rf_model_results.csv')
 
 model_results = {'FFNN': ffnn_results,
                  'XGBoost': xgboost_results,
-                 'Logistic Regression': log_reg_results}
+                 'Logistic Regression': log_reg_results,
+                 "Random Forest": rf_results}
 
 fig, ax = plt.subplots()
 
